@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agent_viz – Live Agent Graph</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Vis.js Network from CDN -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/standalone/umd/vis-network.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+</head>
+<body>
+  <!-- ================================================================
+       Top toolbar
+  ================================================================ -->
+  <header class="toolbar">
+    <div class="toolbar-left">
+      <span class="brand">⬡ agent_viz</span>
+      <span class="session-badge" id="session-badge">connecting…</span>
+    </div>
+    <div class="toolbar-center">
+      <span class="stat-pill" title="Total events received">
+        <span class="stat-icon">⚡</span>
+        <span id="stat-events">0</span> events
+      </span>
+      <span class="stat-pill" title="Unique graph nodes">
+        <span class="stat-icon">◉</span>
+        <span id="stat-nodes">0</span> nodes
+      </span>
+      <span class="stat-pill" title="Graph edges">
+        <span class="stat-icon">→</span>
+        <span id="stat-edges">0</span> edges
+      </span>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn btn-secondary" id="btn-fit" title="Fit graph to viewport">
+        ⤢ Fit
+      </button>
+      <button class="btn btn-secondary" id="btn-clear" title="Clear the current graph">
+        ✕ Clear
+      </button>
+      <button class="btn btn-primary" id="btn-export" title="Export session as JSON">
+        ↓ Export JSON
+      </button>
+      <label class="btn btn-secondary" id="btn-replay-label" title="Load a replay JSON file">
+        ↑ Load Replay
+        <input type="file" id="input-replay" accept=".json" style="display:none" />
+      </label>
+      <span class="ws-status" id="ws-status" title="WebSocket connection status">●</span>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       Main layout
+  ================================================================ -->
+  <main class="main-layout">
+    <!-- Graph canvas -->
+    <section class="graph-pane" id="graph-pane">
+      <div id="graph-canvas"></div>
+      <div class="graph-legend">
+        <span class="legend-item legend-default">default</span>
+        <span class="legend-item legend-llm">llm</span>
+        <span class="legend-item legend-tool">tool</span>
+        <span class="legend-item legend-router">router</span>
+        <span class="legend-item legend-error">error</span>
+      </div>
+    </section>
+
+    <!-- Sidebar: event log + node detail -->
+    <aside class="sidebar">
+      <!-- Node detail card -->
+      <div class="sidebar-card" id="detail-card" style="display:none">
+        <div class="card-header">
+          <span id="detail-title">Node Detail</span>
+          <button class="btn-icon" id="btn-close-detail" title="Close">✕</button>
+        </div>
+        <div class="card-body" id="detail-body"></div>
+      </div>
+
+      <!-- Event log -->
+      <div class="sidebar-card event-log-card">
+        <div class="card-header">
+          <span>Event Log</span>
+          <button class="btn-icon" id="btn-clear-log" title="Clear log">✕</button>
+        </div>
+        <div class="event-log" id="event-log"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ================================================================
+       Replay speed modal
+  ================================================================ -->
+  <div class="modal-overlay" id="replay-modal" style="display:none">
+    <div class="modal">
+      <h2>Replay Session</h2>
+      <p>Loaded <strong id="replay-event-count">0</strong> events.</p>
+      <label>
+        Speed
+        <select id="replay-speed">
+          <option value="2000">0.5× (slow)</option>
+          <option value="1000" selected>1× (normal)</option>
+          <option value="500">2× (fast)</option>
+          <option value="200">5× (very fast)</option>
+          <option value="0">Instant</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btn-replay-cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-replay-start">▶ Start Replay</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
